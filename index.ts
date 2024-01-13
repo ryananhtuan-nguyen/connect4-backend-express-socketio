@@ -11,13 +11,23 @@ const io = new Server(server, {
   },
 });
 
+const currentPlayer = [] as string[];
+
 io.on('connection', (socket) => {
+  //connected
   socket.on('client-ready', () => {
-    socket.emit('client-ready1', 'Hello client');
+    socket.emit('client-ready1', 'Hello from server');
+  });
+  //connecting player
+  socket.on('player-connected', (data: string) => {});
+
+  //next turn
+  socket.on('finish-turn', (data) => {
+    console.log(data);
   });
 });
 
-app.get('/', (req, res) => {
+app.get('/', (_, res) => {
   res.send(`
   <div style="display:flex; justify-content:center; align-items:center; flex-direction:column; width:100%; height:100%;"
   <h1 style="text-align:center;">Hello from server</h1>
