@@ -13,7 +13,7 @@ const io = new Server(server, {
 
 io.on('connection', (socket) => {
   socket.on('client-ready', () => {
-    socket.emit('client-ready');
+    socket.emit('client-ready1', 'Hello client');
   });
 });
 
