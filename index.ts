@@ -11,15 +11,19 @@ const io = new Server(server, {
   },
 });
 
-const currentPlayer = [] as string[];
-
 io.on('connection', (socket) => {
-  //connected
-  socket.on('client-ready', () => {
-    socket.emit('client-ready1', 'Hello from server');
+  //creating room
+  socket.on('creating-room', (data: string) => {
+    const roomName = socket.id;
+    console.log('Message incoming', socket.id);
+    socket.join(roomName);
+    socket.emit('room-created', roomName);
   });
-  //connecting player
-  socket.on('player-connected', (data: string) => {});
+  //joining room
+  socket.on('join-room', (roomId: string) => {
+    socket.join(roomId);
+    socket.broadcast.emit('new-player-joined');
+  });
 
   //next turn
   socket.on('finish-turn', (data) => {
