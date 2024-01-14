@@ -2,6 +2,8 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 
+import { BoardItem, createBoardArray } from './logics/constants';
+
 const app = express();
 const server = http.createServer(app);
 
@@ -12,23 +14,32 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  //creating room
-  socket.on('creating-room', (data: string) => {
-    const roomName = socket.id;
-    console.log('Message incoming', socket.id);
-    socket.join(roomName);
-    socket.emit('room-created', roomName);
-  });
-  //joining room
-  socket.on('join-room', (roomId: string) => {
+  //creating new room
+  socket.on('creating-room', ({ roomId }: { roomId: string }) => {
     socket.join(roomId);
-    socket.broadcast.emit('new-player-joined');
+    console.log('CREATING ', roomId);
+    const newBoard = createBoardArray();
+    //successfully created room
+    socket.emit('room-created', roomId);
+    //send init board
+    socket.emit('init-board', { newBoard });
   });
 
-  //next turn
-  socket.on('finish-turn', (data) => {
-    console.log(data);
+  //new player requesting board
+  socket.on('request-board', ({ roomId }: { roomId: string }) => {
+    socket.join(roomId);
+    console.log('JOINING ', roomId);
+    socket.broadcast.to(roomId).emit('new-player-joined');
   });
+
+  //sending current board to new player
+  socket.on(
+    'current-board',
+    ({ board, roomId }: { board: BoardItem[][]; roomId: string }) => {
+      console.log('REQUESTING ', roomId);
+      socket.broadcast.to(roomId).emit('your-board', { board });
+    }
+  );
 });
 
 app.get('/', (_, res) => {
