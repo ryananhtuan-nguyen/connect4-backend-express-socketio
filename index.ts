@@ -79,7 +79,6 @@ io.on('connection', (socket) => {
     }) => {
       //TODO Checkwin
       const [x, y] = data.recentMove;
-      console.log(x, y, 'LINE80 Index');
       const isWinner = checkWinner({ x, y }, data.newBoard);
       socket.broadcast.emit('next-turn', {
         turn: data.currentPlayer == 'X' ? 'O' : 'X',
