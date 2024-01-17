@@ -71,7 +71,7 @@ export const checkWinner = ({ x, y }: Point, currentBoard: BoardItem[][]) => {
 
     if (max === 4) return true;
 
-    for (let i = 4; i < line.length - 1; i++) {
+    for (let i = 4; i < line.length; i++) {
       max = max - points[i - 4] + points[i];
       if (max === 4) return true;
     }
@@ -80,13 +80,9 @@ export const checkWinner = ({ x, y }: Point, currentBoard: BoardItem[][]) => {
   };
 
   const horizontalWin = slidingWindow(horizontal);
-  console.log('HOR');
   const verticalWin = slidingWindow(vertical);
-  console.log('ver');
   const diag1Win = slidingWindow(diag1);
-  console.log('diag1');
   const diag2Win = slidingWindow(diag2);
-  console.log('diag2');
 
   return horizontalWin || verticalWin || diag1Win || diag2Win;
 };
